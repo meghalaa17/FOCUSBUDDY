@@ -60,6 +60,7 @@ fun StudySessionScreen(viewModel: AppViewModel, onBack: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudySlotView(viewModel: AppViewModel) {
+    //studyslotview
     val subjects  = listOf("Math", "Science", "History", "Biology", "English", "Physics", "Chemistry")
     val days      = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
     val times     = listOf("6:00 AM", "7:00 AM", "8:00 AM", "9:00 AM", "10:00 AM",
@@ -368,8 +369,7 @@ fun StudySlotView(viewModel: AppViewModel) {
     }
 }
 
-// ===================== QUIZ VIEW =====================
-
+//QUIZ VIEW
 @Composable
 fun QuizView(viewModel: AppViewModel) {
 

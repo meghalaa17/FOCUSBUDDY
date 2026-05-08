@@ -20,6 +20,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             A211393_Nelson_Lab01Theme(dynamicColor = false) {
                 Box(modifier = Modifier.fillMaxSize()) {
+                    //sets background of app
                     Image(
                         painter = painterResource(id = R.drawable.bg_paw),
                         contentDescription = null,
@@ -30,7 +31,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = Color.Transparent
                     ) {
-                        AppNavigation()
+                        AppNavigation() //calls appnavigation
                     }
                 }
             }

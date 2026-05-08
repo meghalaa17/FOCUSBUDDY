@@ -17,6 +17,30 @@ fetches data from model so no need remember
 needs mutable to update when data changes
  */
 
+//SHARED DATA BETWEEN SCREENS 8 of em
+/*
+userName, points, petName — mutableStateOf
+studySlots, flashcards, sessionHistory — mutableStateListOf
+quizScore — mutableStateOf
+petLevel — computed from points
+userName       → written: HomeScreen
+               → read:    DashboardScreen
+points         → written: TimerScreen, StudySession, Quiz
+               → read:    Dashboard, Timer, Pet, Stats
+petName        → written: PetGrowthScreen
+               → read:    PetGrowthScreen
+quizScore      → written: StudySession Quiz tab
+               → read:    StatsScreen
+studySlots     → written: StudySession Schedule tab  ← ADD item
+               → read:    StatsScreen                ← DISPLAY item
+flashcards     → written: StudySession Flashcard tab
+               → read:    StudySession list, Stats
+sessionHistory → written: TimerScreen, Quiz
+               → read:    StatsScreen
+petLevel       → written: nowhere — auto from points
+               → read:    Dashboard, Timer, Pet, Stats
+ */
+
 //VIEWMODEL
 /*
 Models.kt: has data which is like blueprint
@@ -26,4 +50,25 @@ create only one viewmodel as all same info across all screens
 step 1 - appnav declares viewmodel
 step 2 - appvm holds all the data
 step 3  - each screen calls function from appvm
+ */
+
+//SCREENS
+/*
+    7 screens
+ */
+
+/* NAVIGATION ROUTE
+Home → Dashboard → StudySession
+                → Timer
+                → PetGrowth
+                → Stats
+     → Login
+
+3 navigation actions:
+
+navigate() → go forward
+navigateUp() → go back one step
+popBackStack() → jump back to a specific screen (Exit button)
+
+
  */

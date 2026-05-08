@@ -1,6 +1,7 @@
 package com.example.a211393_nelson_lab01.data
 //blueprint template that defines the shape of viewmodel data
-//models.kt
+//only three shared data cause multiple fields
+
 data class StudySlot(
     val id: Int,
     val subject: String,

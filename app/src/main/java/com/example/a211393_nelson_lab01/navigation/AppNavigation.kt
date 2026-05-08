@@ -18,7 +18,9 @@ import com.example.a211393_nelson_lab01.ui.screens.PetGrowthScreen
 import com.example.a211393_nelson_lab01.ui.screens.StatsScreen
 import com.example.a211393_nelson_lab01.ui.screens.StudySessionScreen
 import com.example.a211393_nelson_lab01.ui.screens.TimerScreen
+import androidx.compose.ui.unit.sp
 
+//all screens with title
 enum class AppScreen(val title: String) {
     Home("Focus Buddy \uD83D\uDC3E"),
     Login("Login"),
@@ -51,13 +53,23 @@ fun AppTopBar(
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    //VMS1- object appviewmodel is called
-    val viewModel: AppViewModel = viewModel()//function call
+    val viewModel: AppViewModel = viewModel()
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = AppScreen.valueOf(
         backStackEntry?.destination?.route ?: AppScreen.Home.name
     )
+
+    // Screens that should show the bottom bar
+    val screensWithBottomBar = listOf(
+        AppScreen.Dashboard,
+        AppScreen.StudySession,
+        AppScreen.Timer,
+        AppScreen.PetGrowth,
+        AppScreen.Stats
+    )
+
+    val showBottomBar = currentScreen in screensWithBottomBar
 
     Scaffold(
         topBar = {
@@ -67,15 +79,41 @@ fun AppNavigation() {
                 navigateUp      = { navController.navigateUp() }
             )
         },
+        bottomBar = {
+            if (showBottomBar) {
+                NavigationBar {
+                    listOf(
+                        Triple(AppScreen.Dashboard,    "🏠", "Menu"),
+                        Triple(AppScreen.StudySession, "📚", "Study"),
+                        Triple(AppScreen.Timer,        "⏱️", "Timer"),
+                        Triple(AppScreen.PetGrowth,    "🐾", "Pet"),
+                        Triple(AppScreen.Stats,        "📊", "Stats")
+                    ).forEach { (screen, icon, label) ->
+                        NavigationBarItem(
+                            selected = currentScreen == screen,
+                            onClick  = {
+                                navController.navigate(screen.name) {
+                                    popUpTo(AppScreen.Dashboard.name) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState    = true
+                                }
+                            },
+                            label = { Text(label, fontSize = 10.sp) },
+                            icon  = { Text(icon,  fontSize = 16.sp) }
+                        )
+                    }
+                }
+            }
+        },
         containerColor = Color.Transparent
     ) { innerPadding ->
-
         NavHost(
             navController    = navController,
             startDestination = AppScreen.Home.name,
             modifier         = Modifier.padding(innerPadding)
         ) {
-
             composable(AppScreen.Home.name) {
                 HomeScreen(
                     onLoginClick     = { navController.navigate(AppScreen.Login.name) },

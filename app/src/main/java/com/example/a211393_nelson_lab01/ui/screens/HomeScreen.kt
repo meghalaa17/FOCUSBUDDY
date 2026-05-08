@@ -11,18 +11,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun HomeScreen(onLoginClick: () -> Unit, onEnterDashboard: (String) -> Unit) {
+fun HomeScreen(onLoginClick: () -> Unit, onEnterDashboard: (String) -> Unit) { //param for name
+    //local state of text field
     var name by remember { mutableStateOf("") }
 
+    //places all up and down or vertically
     Column(
-        modifier = Modifier
+        modifier = Modifier //style for every composition
             .fillMaxSize()
             .padding(24.dp)
     ) {
-        Row(
+        Row( //places name and login button side by side
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically //align in middle
         ) {
             Text(
                 "Focus Buddy \uD83D\uDC3E",
@@ -30,6 +32,7 @@ fun HomeScreen(onLoginClick: () -> Unit, onEnterDashboard: (String) -> Unit) {
                 fontWeight = FontWeight.ExtraBold,
                 color = MaterialTheme.colorScheme.primary
             )
+            //navigate to login screen
             TextButton(onClick = onLoginClick) {
                 Text("Login | Sign up")
             }
@@ -57,8 +60,8 @@ fun HomeScreen(onLoginClick: () -> Unit, onEnterDashboard: (String) -> Unit) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    onClick = { onEnterDashboard(name) },
-                    enabled = name.isNotBlank(),
+                    onClick = { onEnterDashboard(name) },//pash name to dashboard
+                    enabled = name.isNotBlank(), // disable enter button
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Enter Dashboard")

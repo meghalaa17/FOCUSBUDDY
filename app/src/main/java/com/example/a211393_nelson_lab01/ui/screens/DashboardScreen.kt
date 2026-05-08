@@ -22,88 +22,52 @@ fun DashboardScreen(
     onNavigateToStats: () -> Unit,
     onExit: () -> Unit
 ) {
-    var activeTab by remember { mutableStateOf("menu") }
-
-    Scaffold(
-        containerColor = Color.Transparent,
-        bottomBar = {
-            NavigationBar {
-                listOf(
-                    Triple("menu",  "\uD83C\uDFE0", "Menu"),
-                    Triple("study", "\uD83D\uDCDA", "Study"),
-                    Triple("timer", "\u23F1\uFE0F",  "Timer"),
-                    Triple("pet",   "\uD83D\uDC3E", "Pet"),
-                    Triple("stats", "\uD83D\uDCCA", "Stats"),
-                    Triple("exit",  "\uD83D\uDEAA", "Exit")
-                ).forEach { (id, icon, label) ->
-                    NavigationBarItem(
-                        selected = activeTab == id,
-                        onClick = {
-                            when (id) {
-                                "study" -> onNavigateToStudy()
-                                "timer" -> onNavigateToTimer()
-                                "pet"   -> onNavigateToPet()
-                                "stats" -> onNavigateToStats()
-                                "exit"  -> onExit()
-                                else    -> activeTab = id
-                            }
-                        },
-                        label = { Text(label, fontSize = 8.sp) },
-                        icon  = { Text(icon,  fontSize = 16.sp) }
-                    )
-                }
-            }
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            ElevatedCard(modifier = Modifier.fillMaxWidth()) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        "Welcome back, ${viewModel.userName.value} \uD83D\uDC3E",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
-                    )
-                    Text(
-                        "${viewModel.points.value} XP · Level ${viewModel.petLevel}",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.ExtraBold
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    LinearProgressIndicator(
-                        progress = { (viewModel.points.value % 100) / 100f },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Text(
-                        "${viewModel.points.value % 100}/100 XP to Level ${viewModel.petLevel + 1}",
-                        fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-
-            Spacer(Modifier.height(20.dp))
-
-            when (activeTab) {
-                "menu" -> DashboardMenuGrid(
-                    onStudy = onNavigateToStudy,
-                    onTimer = onNavigateToTimer,
-                    onPet   = onNavigateToPet,
-                    onStats = onNavigateToStats
+    // Remove Scaffold and NavigationBar — just keep the content
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    "Welcome back, ${viewModel.userName.value} 🐾",
+                    fontSize   = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign  = TextAlign.Center
+                )
+                Text(
+                    "${viewModel.points.value} XP · Level ${viewModel.petLevel}",
+                    color      = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.ExtraBold
+                )
+                Spacer(Modifier.height(8.dp))
+                LinearProgressIndicator(
+                    progress = { (viewModel.points.value % 100) / 100f },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Text(
+                    "${viewModel.points.value % 100}/100 XP to Level ${viewModel.petLevel + 1}",
+                    fontSize = 11.sp,
+                    color    = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
+
+        Spacer(Modifier.height(20.dp))
+
+        DashboardMenuGrid(
+            onStudy = onNavigateToStudy,
+            onTimer = onNavigateToTimer,
+            onPet   = onNavigateToPet,
+            onStats = onNavigateToStats
+        )
     }
 }
 
