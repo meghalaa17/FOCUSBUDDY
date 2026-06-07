@@ -2,6 +2,7 @@ package com.example.a211393_nelson_lab01.data
 //blueprint template that defines the shape of viewmodel data
 //only three shared data cause multiple fields
 
+
 data class StudySlot(
     val id: Int,
     val subject: String,
@@ -10,12 +11,14 @@ data class StudySlot(
     val duration: String
 )
 
+//
 data class Flashcard(
     val id: Int,
     val question: String,
     val answer: String
 )
 
+//pomodoro
 data class StudySession(
     val id: Int,
     val type: String,

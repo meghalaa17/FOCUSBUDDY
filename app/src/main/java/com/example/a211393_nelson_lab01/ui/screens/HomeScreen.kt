@@ -9,11 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import androidx.compose.runtime.saveable.rememberSaveable
 @Composable
 fun HomeScreen(onLoginClick: () -> Unit, onEnterDashboard: (String) -> Unit) { //param for name
     //local state of text field
-    var name by remember { mutableStateOf("") }
+    var name by rememberSaveable { mutableStateOf("") }
 
     //places all up and down or vertically
     Column(

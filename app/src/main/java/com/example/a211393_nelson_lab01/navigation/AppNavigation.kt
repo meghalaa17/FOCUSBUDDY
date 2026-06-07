@@ -53,7 +53,7 @@ fun AppTopBar(
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    val viewModel: AppViewModel = viewModel()
+    val viewModel: AppViewModel = viewModel() //create viewmodel
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = AppScreen.valueOf(
