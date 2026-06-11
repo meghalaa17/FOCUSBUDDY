@@ -8,6 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.*
 import com.example.a211393_nelson_lab01.AppViewModel
@@ -20,15 +22,20 @@ import com.example.a211393_nelson_lab01.ui.screens.StudySessionScreen
 import com.example.a211393_nelson_lab01.ui.screens.TimerScreen
 import androidx.compose.ui.unit.sp
 
+private val compose: Any
+private val navigation: Any
+
 //all screens with title
 enum class AppScreen(val title: String) {
     Home("Focus Buddy \uD83D\uDC3E"),
     Login("Login"),
     Dashboard("Dashboard"),
     StudySession("Study Session"),
-    Timer("Focus Timer"),
+    Timer("Focus Timer"),          // now uses TimerWithSensorScreen
     PetGrowth("Your Pet"),
-    Stats("Stats & Summary")
+    Stats("Stats & Summary"),
+    DailyTip("Daily Motivation"),   // NEW — Screen 6
+    Community("Community Goals")   // NEW — Screen 7
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

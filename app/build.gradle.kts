@@ -55,6 +55,35 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
+    // ROOM — local database
+    // room-runtime: the core Room library
+    // room-ktx: Kotlin extensions (adds suspend/Flow support)
+    // room-compiler: generates the DAO implementation at compile time
+    //   (kapt = Kotlin Annotation Processing Tool)
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    // NOTE: you must also add `id("kotlin-kapt")` to your plugins block
+
+    // RETROFIT — HTTP client for the Web API
+    // retrofit: the core library
+    // converter-gson: converts JSON ↔ Kotlin data classes automatically
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // FIREBASE — Cloud database
+    // Import the Firebase BOM (Bill of Materials) first.
+    // The BOM manages version compatibility between Firebase libraries.
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    // firestore-ktx gives you .await() and Flow support
+
+    // COROUTINES (if not already present)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.material3)
+    // play-services: adds .await() for Firebase Tasks
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
