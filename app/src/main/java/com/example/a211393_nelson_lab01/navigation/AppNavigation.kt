@@ -26,11 +26,9 @@ enum class AppScreen(val title: String) {
     Login("Login"),
     Dashboard("Dashboard"),
     StudySession("Study Session"),
-    Timer("Focus Timer"),          // now uses TimerWithSensorScreen
+    Timer("Focus Timer"),
     PetGrowth("Your Pet"),
-    Stats("Stats & Summary"),
-    DailyTip("Daily Motivation"),   // NEW — Screen 6
-    Community("Community Goals")   // NEW — Screen 7
+    Stats("Stats & Summary")
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -153,7 +151,10 @@ fun AppNavigation() {
             }
 
             composable(AppScreen.Timer.name) {
-                TimerWithSensorScreen(viewModel = viewModel, onBack = { navController.navigateUp() })
+                TimerScreen(
+                    viewModel = viewModel,
+                    onBack    = { navController.navigateUp() }
+                )
             }
 
             composable(AppScreen.PetGrowth.name) {
@@ -168,12 +169,6 @@ fun AppNavigation() {
                     viewModel = viewModel,
                     onBack    = { navController.navigateUp() }
                 )
-            }
-            composable(AppScreen.DailyTip.name) {
-                DailyTipScreen(viewModel = viewModel, onBack = { navController.navigateUp() })
-            }
-            composable(AppScreen.Community.name) {
-                CommunityScreen(viewModel = viewModel, onBack = { navController.navigateUp() })
             }
         }
     }
