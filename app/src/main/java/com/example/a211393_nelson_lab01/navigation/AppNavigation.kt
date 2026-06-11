@@ -19,11 +19,9 @@ import com.example.a211393_nelson_lab01.ui.screens.LoginScreen
 import com.example.a211393_nelson_lab01.ui.screens.PetGrowthScreen
 import com.example.a211393_nelson_lab01.ui.screens.StatsScreen
 import com.example.a211393_nelson_lab01.ui.screens.StudySessionScreen
-import com.example.a211393_nelson_lab01.ui.screens.TimerScreen
 import androidx.compose.ui.unit.sp
 
-private val compose: Any
-private val navigation: Any
+
 
 //all screens with title
 enum class AppScreen(val title: String) {
@@ -179,4 +177,9 @@ fun AppNavigation() {
             }
         }
     }
+}
+
+@Composable
+fun TimerScreen(viewModel: AppViewModel, onBack: () -> Boolean) {
+    TODO("Not yet implemented")
 }

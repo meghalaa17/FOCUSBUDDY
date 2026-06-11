@@ -17,6 +17,11 @@ import com.example.a211393_nelson_lab01.AppViewModel
 @Composable
 fun PetGrowthScreen(viewModel: AppViewModel, onBack: () -> Unit) {
 
+    // Collect StateFlows from ViewModel as Compose state
+    val studySlots by viewModel.studySlots.collectAsState()
+    val flashcards by viewModel.flashcards.collectAsState()
+    val sessionHistory by viewModel.sessionHistory.collectAsState()
+
     var petNameInput by remember { mutableStateOf(viewModel.petName.value) }
     var editingName  by remember { mutableStateOf(false) }
     val scrollState  = rememberScrollState()
@@ -145,7 +150,7 @@ fun PetGrowthScreen(viewModel: AppViewModel, onBack: () -> Unit) {
                 ) {
                     Text("\uD83D\uDCC5", fontSize = 24.sp)
                     Text(
-                        "${viewModel.studySlots.size}",
+                        "${studySlots.size}",
                         fontWeight = FontWeight.Bold,
                         fontSize   = 20.sp,
                         color      = MaterialTheme.colorScheme.primary
@@ -163,7 +168,7 @@ fun PetGrowthScreen(viewModel: AppViewModel, onBack: () -> Unit) {
                 ) {
                     Text("\uD83C\uDCA0", fontSize = 24.sp)
                     Text(
-                        "${viewModel.flashcards.size}",
+                        "${flashcards.size}",
                         fontWeight = FontWeight.Bold,
                         fontSize   = 20.sp,
                         color      = MaterialTheme.colorScheme.primary
@@ -181,7 +186,7 @@ fun PetGrowthScreen(viewModel: AppViewModel, onBack: () -> Unit) {
                 ) {
                     Text("\u23F1\uFE0F", fontSize = 24.sp)
                     Text(
-                        "${viewModel.sessionHistory.size}",
+                        "${sessionHistory.size}",
                         fontWeight = FontWeight.Bold,
                         fontSize   = 20.sp,
                         color      = MaterialTheme.colorScheme.primary
