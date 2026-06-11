@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1016025703428",
+    "project_id": "a211393-nelson-lab",
+    "storage_bucket": "a211393-nelson-lab.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1016025703428:android:810c40699acfbe104d0151",
+        "android_client_info": {
+          "package_name": "com.example.a211393_nelson_lab01"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBp64EF1B_ME8mraVSX0JTZ12uY1SqG68I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
