@@ -61,7 +61,7 @@ fun StudySessionScreen(viewModel: AppViewModel, onBack: () -> Unit) {
 @Composable
 fun StudySlotView(viewModel: AppViewModel) {
     val studySlots by viewModel.studySlots.collectAsState()
-    //studyslotview
+
     val subjects  = listOf("Math", "Science", "History", "Biology", "English", "Physics", "Chemistry")
     val days      = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
     val times     = listOf("6:00 AM", "7:00 AM", "8:00 AM", "9:00 AM", "10:00 AM",
@@ -86,11 +86,7 @@ fun StudySlotView(viewModel: AppViewModel) {
             .fillMaxSize()
             .verticalScroll(scrollState)
     ) {
-        Text(
-            "Add Study Slot",
-            fontWeight = FontWeight.Bold,
-            fontSize   = 16.sp
-        )
+        Text("Add Study Slot", fontWeight = FontWeight.Bold, fontSize = 16.sp)
         Text(
             "Plan your weekly study schedule",
             fontSize = 12.sp,
@@ -99,9 +95,10 @@ fun StudySlotView(viewModel: AppViewModel) {
         Spacer(Modifier.height(16.dp))
 
         // Subject dropdown
+        // FIX: menuAnchor() without args is deprecated — use MenuAnchorType.PrimaryNotEditable
         ExposedDropdownMenuBox(
-            expanded          = subjectExpanded,
-            onExpandedChange  = { subjectExpanded = it }
+            expanded         = subjectExpanded,
+            onExpandedChange = { subjectExpanded = it }
         ) {
             OutlinedTextField(
                 value         = selectedSubject,
@@ -110,12 +107,14 @@ fun StudySlotView(viewModel: AppViewModel) {
                 label         = { Text("Subject") },
                 leadingIcon   = { Text("\uD83D\uDCDA", fontSize = 16.sp) },
                 trailingIcon  = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = subjectExpanded) },
-                modifier      = Modifier.menuAnchor().fillMaxWidth(),
+                modifier      = Modifier
+                    .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                    .fillMaxWidth(),
                 shape         = RoundedCornerShape(12.dp)
             )
             ExposedDropdownMenu(
-                expanded          = subjectExpanded,
-                onDismissRequest  = { subjectExpanded = false }
+                expanded         = subjectExpanded,
+                onDismissRequest = { subjectExpanded = false }
             ) {
                 subjects.forEach { s ->
                     DropdownMenuItem(
@@ -140,7 +139,9 @@ fun StudySlotView(viewModel: AppViewModel) {
                 label         = { Text("Day") },
                 leadingIcon   = { Text("\uD83D\uDCC5", fontSize = 16.sp) },
                 trailingIcon  = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = dayExpanded) },
-                modifier      = Modifier.menuAnchor().fillMaxWidth(),
+                modifier      = Modifier
+                    .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                    .fillMaxWidth(),
                 shape         = RoundedCornerShape(12.dp)
             )
             ExposedDropdownMenu(
@@ -176,7 +177,9 @@ fun StudySlotView(viewModel: AppViewModel) {
                     label         = { Text("Time") },
                     leadingIcon   = { Text("\u23F0", fontSize = 14.sp) },
                     trailingIcon  = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = timeExpanded) },
-                    modifier      = Modifier.menuAnchor().fillMaxWidth(),
+                    modifier      = Modifier
+                        .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                        .fillMaxWidth(),
                     shape         = RoundedCornerShape(12.dp)
                 )
                 ExposedDropdownMenu(
@@ -205,7 +208,9 @@ fun StudySlotView(viewModel: AppViewModel) {
                     label         = { Text("Duration") },
                     leadingIcon   = { Text("\u23F1\uFE0F", fontSize = 14.sp) },
                     trailingIcon  = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = durationExpanded) },
-                    modifier      = Modifier.menuAnchor().fillMaxWidth(),
+                    modifier      = Modifier
+                        .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                        .fillMaxWidth(),
                     shape         = RoundedCornerShape(12.dp)
                 )
                 ExposedDropdownMenu(
@@ -251,7 +256,7 @@ fun StudySlotView(viewModel: AppViewModel) {
 
         Button(
             onClick = {
-                viewModel.addStudySlot( //function called
+                viewModel.addStudySlot(
                     subject  = selectedSubject,
                     day      = selectedDay,
                     time     = selectedTime,
@@ -266,7 +271,6 @@ fun StudySlotView(viewModel: AppViewModel) {
 
         Spacer(Modifier.height(24.dp))
 
-        // My schedule list
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -295,8 +299,7 @@ fun StudySlotView(viewModel: AppViewModel) {
                 fontSize = 13.sp
             )
         } else {
-            // Group by day
-            val grouped = studySlots.groupBy { it.day }
+            val grouped  = studySlots.groupBy { it.day }
             val dayOrder = listOf("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday")
 
             dayOrder.forEach { day ->
@@ -319,7 +322,6 @@ fun StudySlotView(viewModel: AppViewModel) {
                                 Modifier.padding(12.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                // Subject colour dot
                                 Surface(
                                     modifier = Modifier.size(40.dp),
                                     shape    = RoundedCornerShape(8.dp),
@@ -343,20 +345,14 @@ fun StudySlotView(viewModel: AppViewModel) {
                                 }
                                 Spacer(Modifier.width(12.dp))
                                 Column(Modifier.weight(1f)) {
-                                    Text(
-                                        slot.subject,
-                                        fontWeight = FontWeight.SemiBold,
-                                        fontSize   = 14.sp
-                                    )
+                                    Text(slot.subject, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
                                     Text(
                                         "${slot.time}  ·  ${slot.duration}",
                                         fontSize = 12.sp,
                                         color    = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
-                                IconButton(
-                                    onClick = { viewModel.removeStudySlot(slot) }
-                                ) {
+                                IconButton(onClick = { viewModel.removeStudySlot(slot) }) {
                                     Text("\uD83D\uDDD1\uFE0F", fontSize = 16.sp)
                                 }
                             }
@@ -370,7 +366,8 @@ fun StudySlotView(viewModel: AppViewModel) {
     }
 }
 
-//QUIZ VIEW
+// ===================== QUIZ VIEW =====================
+
 @Composable
 fun QuizView(viewModel: AppViewModel) {
     val studySlots by viewModel.studySlots.collectAsState()
@@ -414,36 +411,23 @@ fun QuizView(viewModel: AppViewModel) {
     var finished        by remember { mutableStateOf(false) }
     var answered        by remember { mutableStateOf(false) }
 
-    // ── Subject selection ─────────────────────────────────────────
     if (selectedSubject.isEmpty()) {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                "\uD83E\uDDE0 Choose a Subject",
-                fontWeight = FontWeight.Bold,
-                fontSize   = 18.sp
-            )
+            Text("\uD83E\uDDE0 Choose a Subject", fontWeight = FontWeight.Bold, fontSize = 18.sp)
             Spacer(Modifier.height(4.dp))
-            Text(
-                "Each correct answer = +10 XP",
-                fontSize   = 13.sp,
-                color      = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.SemiBold
-            )
+            Text("Each correct answer = +10 XP", fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
             Spacer(Modifier.height(16.dp))
 
             subjects.forEach { subject ->
                 val emoji = when (subject) {
-                    "Math"    -> "\uD83D\uDCCA"
-                    "Science" -> "\uD83D\uDD2C"
-                    "History" -> "\uD83C\uDFDB\uFE0F"
-                    "Biology" -> "\uD83E\uDDEC"
-                    "English" -> "\uD83D\uDCDD"
-                    else      -> "\uD83D\uDCDA"
+                    "Math"    -> "\uD83D\uDCCA"; "Science" -> "\uD83D\uDD2C"
+                    "History" -> "\uD83C\uDFDB\uFE0F"; "Biology" -> "\uD83E\uDDEC"
+                    "English" -> "\uD83D\uDCDD"; else -> "\uD83D\uDCDA"
                 }
-                // Show scheduled slots for this subject
                 val slotsForSubject = studySlots.count { it.subject == subject }
 
                 ElevatedCard(
@@ -451,42 +435,25 @@ fun QuizView(viewModel: AppViewModel) {
                         .fillMaxWidth()
                         .padding(vertical = 6.dp)
                         .clickable {
-                            selectedSubject = subject
-                            currentIndex    = 0
-                            selectedIndex   = -1
-                            score           = 0
-                            finished        = false
-                            answered        = false
+                            selectedSubject = subject; currentIndex = 0
+                            selectedIndex = -1; score = 0; finished = false; answered = false
                         }
                 ) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
+                        modifier = Modifier.fillMaxWidth().padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(emoji, fontSize = 28.sp)
                         Spacer(Modifier.width(16.dp))
                         Column(Modifier.weight(1f)) {
                             Text(subject, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                            Text(
-                                "3 questions  ·  up to 30 XP",
-                                fontSize = 12.sp,
-                                color    = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            if (slotsForSubject > 0) {
-                                Text(
-                                    "\uD83D\uDCC5 $slotsForSubject slot(s) scheduled",
-                                    fontSize = 11.sp,
-                                    color    = MaterialTheme.colorScheme.primary
-                                )
-                            }
+                            Text("3 questions  ·  up to 30 XP", fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            if (slotsForSubject > 0)
+                                Text("\uD83D\uDCC5 $slotsForSubject slot(s) scheduled",
+                                    fontSize = 11.sp, color = MaterialTheme.colorScheme.primary)
                         }
-                        Text(
-                            "\u25B6",
-                            fontSize = 14.sp,
-                            color    = MaterialTheme.colorScheme.primary
-                        )
+                        Text("\u25B6", fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
                     }
                 }
             }
@@ -494,7 +461,6 @@ fun QuizView(viewModel: AppViewModel) {
         return
     }
 
-    // ── Quiz finished ─────────────────────────────────────────────
     if (finished) {
         val xpEarned = score * 10
         Column(
@@ -504,67 +470,39 @@ fun QuizView(viewModel: AppViewModel) {
         ) {
             Text(if (score == 3) "\uD83C\uDF1F" else "\uD83C\uDF89", fontSize = 64.sp)
             Spacer(Modifier.height(16.dp))
-            Text(
-                "$selectedSubject Quiz Complete!",
-                fontSize   = 22.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign  = TextAlign.Center
-            )
+            Text("$selectedSubject Quiz Complete!", fontSize = 22.sp,
+                fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
             Spacer(Modifier.height(8.dp))
             Text("Score: $score / 3", fontSize = 20.sp)
             Spacer(Modifier.height(8.dp))
-            Surface(
-                shape = RoundedCornerShape(12.dp),
-                color = MaterialTheme.colorScheme.primaryContainer
-            ) {
-                Text(
-                    "+$xpEarned XP earned",
-                    modifier   = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    color      = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold,
-                    fontSize   = 16.sp
-                )
+            Surface(shape = RoundedCornerShape(12.dp), color = MaterialTheme.colorScheme.primaryContainer) {
+                Text("+$xpEarned XP earned",
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 16.sp)
             }
             Spacer(Modifier.height(8.dp))
-            Text(
-                when {
-                    score == 3 -> "Perfect score! \uD83C\uDF1F"
-                    score == 2 -> "Good job! Almost perfect!"
-                    score == 1 -> "Keep practising!"
-                    else       -> "Don't give up, try again!"
-                },
-                fontSize = 14.sp,
-                color    = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            Text(when {
+                score == 3 -> "Perfect score! \uD83C\uDF1F"
+                score == 2 -> "Good job! Almost perfect!"
+                score == 1 -> "Keep practising!"
+                else       -> "Don't give up, try again!"
+            }, fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Spacer(Modifier.height(28.dp))
-            Button(
-                onClick  = { viewModel.saveQuizScore(score); selectedSubject = "" },
-                modifier = Modifier.fillMaxWidth()
-            ) { Text("Save & Back to Subjects") }
+            Button(onClick = { viewModel.saveQuizScore(score); selectedSubject = "" },
+                modifier = Modifier.fillMaxWidth()) { Text("Save & Back to Subjects") }
             Spacer(Modifier.height(8.dp))
-            OutlinedButton(
-                onClick = {
-                    currentIndex  = 0
-                    selectedIndex = -1
-                    score         = 0
-                    finished      = false
-                    answered      = false
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) { Text("Retry $selectedSubject") }
+            OutlinedButton(onClick = {
+                currentIndex = 0; selectedIndex = -1; score = 0; finished = false; answered = false
+            }, modifier = Modifier.fillMaxWidth()) { Text("Retry $selectedSubject") }
         }
         return
     }
 
-    // ── Active quiz ───────────────────────────────────────────────
     val questions = questionBank[selectedSubject] ?: emptyList()
     val q         = questions[currentIndex]
 
     Column(modifier = Modifier.fillMaxSize()) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             TextButton(onClick = { selectedSubject = "" }) { Text("\u2190 Subjects") }
             Spacer(Modifier.weight(1f))
             Text(selectedSubject, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
@@ -574,20 +512,12 @@ fun QuizView(viewModel: AppViewModel) {
             modifier = Modifier.fillMaxWidth()
         )
         Spacer(Modifier.height(4.dp))
-        Text(
-            "Question ${currentIndex + 1} of ${questions.size}  ·  Score: $score",
-            fontSize = 12.sp,
-            color    = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        Text("Question ${currentIndex + 1} of ${questions.size}  ·  Score: $score",
+            fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(Modifier.height(16.dp))
 
         ElevatedCard(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                q.text,
-                modifier   = Modifier.padding(20.dp),
-                fontSize   = 16.sp,
-                fontWeight = FontWeight.SemiBold
-            )
+            Text(q.text, modifier = Modifier.padding(20.dp), fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
         }
         Spacer(Modifier.height(16.dp))
 
@@ -599,20 +529,14 @@ fun QuizView(viewModel: AppViewModel) {
                 else                    -> MaterialTheme.colorScheme.surfaceVariant
             }
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp)
+                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
                     .clickable(enabled = !answered) {
-                        selectedIndex = index
-                        answered      = true
+                        selectedIndex = index; answered = true
                         if (index == q.correctIndex) score++
                     },
                 colors = CardDefaults.cardColors(containerColor = containerColor)
             ) {
-                Row(
-                    Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text("${('A' + index)}. ", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     Text(option, fontSize = 14.sp, modifier = Modifier.weight(1f))
                     if (answered && index == q.correctIndex) Text("\u2705", fontSize = 14.sp)
@@ -626,13 +550,12 @@ fun QuizView(viewModel: AppViewModel) {
         if (answered) {
             Text(
                 if (selectedIndex == q.correctIndex) "+10 XP \uD83C\uDF1F" else "Incorrect \uD83D\uDCDA Keep studying!",
-                color      = if (selectedIndex == q.correctIndex) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
-                fontWeight = FontWeight.Bold,
-                fontSize   = 13.sp
+                color = if (selectedIndex == q.correctIndex) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                fontWeight = FontWeight.Bold, fontSize = 13.sp
             )
             Spacer(Modifier.height(8.dp))
             Button(
-                onClick  = {
+                onClick = {
                     if (currentIndex < questions.size - 1) {
                         currentIndex++; selectedIndex = -1; answered = false
                     } else { finished = true }
@@ -655,104 +578,65 @@ fun FlashcardView(viewModel: AppViewModel) {
     var flippedId   by remember { mutableStateOf(-1) }
     val scrollState = rememberScrollState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-    ) {
+    Column(modifier = Modifier.fillMaxSize().verticalScroll(scrollState)) {
         Text("Create Flashcard", fontWeight = FontWeight.Bold, fontSize = 16.sp)
         Spacer(Modifier.height(12.dp))
 
-        OutlinedTextField(
-            value         = question,
-            onValueChange = { question = it },
-            label         = { Text("Question / Front") },
-            modifier      = Modifier.fillMaxWidth(),
-            shape         = RoundedCornerShape(12.dp)
-        )
+        OutlinedTextField(value = question, onValueChange = { question = it },
+            label = { Text("Question / Front") }, modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp))
         Spacer(Modifier.height(8.dp))
 
-        OutlinedTextField(
-            value         = answer,
-            onValueChange = { answer = it },
-            label         = { Text("Answer / Back") },
-            modifier      = Modifier.fillMaxWidth(),
-            shape         = RoundedCornerShape(12.dp)
-        )
+        OutlinedTextField(value = answer, onValueChange = { answer = it },
+            label = { Text("Answer / Back") }, modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp))
         Spacer(Modifier.height(12.dp))
 
         Button(
-            onClick  = {
+            onClick = {
                 if (question.isNotBlank() && answer.isNotBlank()) {
-                    viewModel.addFlashcard(question, answer)
-                    question = ""
-                    answer   = ""
+                    viewModel.addFlashcard(question, answer); question = ""; answer = ""
                 }
             },
-            enabled  = question.isNotBlank() && answer.isNotBlank(),
+            enabled = question.isNotBlank() && answer.isNotBlank(),
             modifier = Modifier.fillMaxWidth()
         ) { Text("Add Flashcard (+5 XP)") }
 
         Spacer(Modifier.height(24.dp))
-
-        Text(
-            "My Flashcards (${flashcards.size})",
-            fontWeight = FontWeight.Bold,
-            fontSize   = 15.sp
-        )
+        Text("My Flashcards (${flashcards.size})", fontWeight = FontWeight.Bold, fontSize = 15.sp)
         Spacer(Modifier.height(8.dp))
 
         if (flashcards.isEmpty()) {
-            Text(
-                "No flashcards yet. Create one above!",
-                color    = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 13.sp
-            )
+            Text("No flashcards yet. Create one above!",
+                color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
         } else {
             flashcards.forEach { card ->
                 val isFlipped = flippedId == card.id
                 Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
                         .animateContentSize()
                         .clickable { flippedId = if (isFlipped) -1 else card.id },
                     colors = CardDefaults.cardColors(
-                        containerColor = if (isFlipped)
-                            MaterialTheme.colorScheme.primaryContainer
-                        else
-                            MaterialTheme.colorScheme.surfaceVariant
+                        containerColor = if (isFlipped) MaterialTheme.colorScheme.primaryContainer
+                        else MaterialTheme.colorScheme.surfaceVariant
                     )
                 ) {
                     Column(Modifier.padding(16.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Column(Modifier.weight(1f)) {
-                                Text(
-                                    if (isFlipped) "Answer" else "Question",
-                                    fontSize = 11.sp,
-                                    color    = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                                Text(
-                                    if (isFlipped) card.answer else card.question,
-                                    fontWeight = FontWeight.SemiBold
-                                )
+                                Text(if (isFlipped) "Answer" else "Question",
+                                    fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(if (isFlipped) card.answer else card.question, fontWeight = FontWeight.SemiBold)
                             }
                             Text(if (isFlipped) "\u25B2" else "\u25BC", fontSize = 12.sp)
                         }
                         if (!isFlipped) {
                             Spacer(Modifier.height(4.dp))
-                            Text(
-                                "Tap to reveal answer",
-                                fontSize = 11.sp,
-                                color    = MaterialTheme.colorScheme.primary
-                            )
+                            Text("Tap to reveal answer", fontSize = 11.sp, color = MaterialTheme.colorScheme.primary)
                         }
                         Spacer(Modifier.height(8.dp))
-                        TextButton(
-                            onClick = { viewModel.removeFlashcard(card) },
-                            colors  = ButtonDefaults.textButtonColors(
-                                contentColor = MaterialTheme.colorScheme.error
-                            )
+                        TextButton(onClick = { viewModel.removeFlashcard(card) },
+                            colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
                         ) { Text("Delete", fontSize = 12.sp) }
                     }
                 }
