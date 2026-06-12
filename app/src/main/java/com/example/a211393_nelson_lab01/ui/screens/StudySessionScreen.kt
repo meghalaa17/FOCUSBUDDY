@@ -60,6 +60,7 @@ fun StudySessionScreen(viewModel: AppViewModel, onBack: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudySlotView(viewModel: AppViewModel) {
+    val studySlots by viewModel.studySlots.collectAsState()
     //studyslotview
     val subjects  = listOf("Math", "Science", "History", "Biology", "English", "Physics", "Chemistry")
     val days      = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
@@ -272,13 +273,13 @@ fun StudySlotView(viewModel: AppViewModel) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                "My Schedule (${viewModel.studySlots.size})",
+                "My Schedule (${studySlots.size})",
                 fontWeight = FontWeight.Bold,
                 fontSize   = 15.sp
             )
-            if (viewModel.studySlots.isNotEmpty()) {
+            if (studySlots.isNotEmpty()) {
                 Text(
-                    "${viewModel.studySlots.size} slots",
+                    "${studySlots.size} slots",
                     fontSize = 12.sp,
                     color    = MaterialTheme.colorScheme.primary
                 )
@@ -287,7 +288,7 @@ fun StudySlotView(viewModel: AppViewModel) {
 
         Spacer(Modifier.height(8.dp))
 
-        if (viewModel.studySlots.isEmpty()) {
+        if (studySlots.isEmpty()) {
             Text(
                 "No slots yet. Add your first study slot above!",
                 color    = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -295,7 +296,7 @@ fun StudySlotView(viewModel: AppViewModel) {
             )
         } else {
             // Group by day
-            val grouped = viewModel.studySlots.groupBy { it.day }
+            val grouped = studySlots.groupBy { it.day }
             val dayOrder = listOf("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday")
 
             dayOrder.forEach { day ->
@@ -354,7 +355,7 @@ fun StudySlotView(viewModel: AppViewModel) {
                                     )
                                 }
                                 IconButton(
-                                    onClick = { viewModel.removeStudySlot(slot.id) }
+                                    onClick = { viewModel.removeStudySlot(slot) }
                                 ) {
                                     Text("\uD83D\uDDD1\uFE0F", fontSize = 16.sp)
                                 }
@@ -372,6 +373,7 @@ fun StudySlotView(viewModel: AppViewModel) {
 //QUIZ VIEW
 @Composable
 fun QuizView(viewModel: AppViewModel) {
+    val studySlots by viewModel.studySlots.collectAsState()
 
     data class Question(val text: String, val options: List<String>, val correctIndex: Int)
 
@@ -442,7 +444,7 @@ fun QuizView(viewModel: AppViewModel) {
                     else      -> "\uD83D\uDCDA"
                 }
                 // Show scheduled slots for this subject
-                val slotsForSubject = viewModel.studySlots.count { it.subject == subject }
+                val slotsForSubject = studySlots.count { it.subject == subject }
 
                 ElevatedCard(
                     modifier = Modifier
@@ -647,6 +649,7 @@ fun QuizView(viewModel: AppViewModel) {
 
 @Composable
 fun FlashcardView(viewModel: AppViewModel) {
+    val flashcards by viewModel.flashcards.collectAsState()
     var question    by remember { mutableStateOf("") }
     var answer      by remember { mutableStateOf("") }
     var flippedId   by remember { mutableStateOf(-1) }
@@ -693,20 +696,20 @@ fun FlashcardView(viewModel: AppViewModel) {
         Spacer(Modifier.height(24.dp))
 
         Text(
-            "My Flashcards (${viewModel.flashcards.size})",
+            "My Flashcards (${flashcards.size})",
             fontWeight = FontWeight.Bold,
             fontSize   = 15.sp
         )
         Spacer(Modifier.height(8.dp))
 
-        if (viewModel.flashcards.isEmpty()) {
+        if (flashcards.isEmpty()) {
             Text(
                 "No flashcards yet. Create one above!",
                 color    = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 13.sp
             )
         } else {
-            viewModel.flashcards.forEach { card ->
+            flashcards.forEach { card ->
                 val isFlipped = flippedId == card.id
                 Card(
                     modifier = Modifier
@@ -746,7 +749,7 @@ fun FlashcardView(viewModel: AppViewModel) {
                         }
                         Spacer(Modifier.height(8.dp))
                         TextButton(
-                            onClick = { viewModel.removeFlashcard(card.id) },
+                            onClick = { viewModel.removeFlashcard(card) },
                             colors  = ButtonDefaults.textButtonColors(
                                 contentColor = MaterialTheme.colorScheme.error
                             )

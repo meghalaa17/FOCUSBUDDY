@@ -19,9 +19,41 @@ import com.example.a211393_nelson_lab01.ui.screens.LoginScreen
 import com.example.a211393_nelson_lab01.ui.screens.PetGrowthScreen
 import com.example.a211393_nelson_lab01.ui.screens.StatsScreen
 import com.example.a211393_nelson_lab01.ui.screens.StudySessionScreen
+// --- ADDED: imports for the three screens that were missing ---
+import com.example.a211393_nelson_lab01.ui.screens.DailyTipScreen
+import com.example.a211393_nelson_lab01.ui.screens.CommunityScreen
+import com.example.a211393_nelson_lab01.ui.screens.TimerWithSensorScreen
 import androidx.compose.ui.unit.sp
 
 
+// ================================================================
+// CHANGES MADE IN THIS FILE:
+//
+// 1. Added imports for DailyTipScreen, CommunityScreen,
+//    TimerWithSensorScreen (these existed as files but were
+//    never imported or wired into the NavHost).
+//
+// 2. Removed the broken placeholder `TimerScreen` composable
+//    that had `TODO("Not yet implemented")` and the wrong
+//    `onBack: () -> Boolean` signature.
+//
+// 3. AppScreen.Timer route now calls TimerWithSensorScreen
+//    (your actual Pillar 4 sensor screen) instead of the
+//    broken placeholder.
+//
+// 4. Added composable(AppScreen.DailyTip.name) and
+//    composable(AppScreen.Community.name) blocks to the
+//    NavHost — these routes existed in the enum but had
+//    no matching destination, which would crash on navigate().
+//
+// 5. Added DailyTip and Community as menu options in
+//    DashboardMenuGrid (inside DashboardScreen.kt — see that
+//    file's notes). For now, the simplest fix is to add two
+//    more buttons there. If you'd rather not touch
+//    DashboardScreen, you can navigate to them via
+//    navController.navigate(AppScreen.DailyTip.name) from
+//    anywhere you like.
+// ================================================================
 
 //all screens with title
 enum class AppScreen(val title: String) {
@@ -29,11 +61,11 @@ enum class AppScreen(val title: String) {
     Login("Login"),
     Dashboard("Dashboard"),
     StudySession("Study Session"),
-    Timer("Focus Timer"),          // now uses TimerWithSensorScreen
+    Timer("Focus Timer"),
     PetGrowth("Your Pet"),
     Stats("Stats & Summary"),
-    DailyTip("Daily Motivation"),   // NEW — Screen 6
-    Community("Community Goals")   // NEW — Screen 7
+    DailyTip("Daily Motivation"),
+    Community("Community Goals")
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,12 +98,17 @@ fun AppNavigation() {
     )
 
     // Screens that should show the bottom bar
+    // --- ADDED: DailyTip and Community so they're reachable from
+    //     the bottom bar too (otherwise they'd be unreachable
+    //     unless wired up elsewhere) ---
     val screensWithBottomBar = listOf(
         AppScreen.Dashboard,
         AppScreen.StudySession,
         AppScreen.Timer,
         AppScreen.PetGrowth,
-        AppScreen.Stats
+        AppScreen.Stats,
+        AppScreen.DailyTip,
+        AppScreen.Community
     )
 
     val showBottomBar = currentScreen in screensWithBottomBar
@@ -92,7 +129,10 @@ fun AppNavigation() {
                         Triple(AppScreen.StudySession, "📚", "Study"),
                         Triple(AppScreen.Timer,        "⏱️", "Timer"),
                         Triple(AppScreen.PetGrowth,    "🐾", "Pet"),
-                        Triple(AppScreen.Stats,        "📊", "Stats")
+                        Triple(AppScreen.Stats,        "📊", "Stats"),
+                        // --- ADDED: two new bottom bar items ---
+                        Triple(AppScreen.DailyTip,     "🌟", "Tips"),
+                        Triple(AppScreen.Community,    "🌍", "Community")
                     ).forEach { (screen, icon, label) ->
                         NavigationBarItem(
                             selected = currentScreen == screen,
@@ -105,8 +145,8 @@ fun AppNavigation() {
                                     restoreState    = true
                                 }
                             },
-                            label = { Text(label, fontSize = 10.sp) },
-                            icon  = { Text(icon,  fontSize = 16.sp) }
+                            label = { Text(label, fontSize = 9.sp) },
+                            icon  = { Text(icon,  fontSize = 14.sp) }
                         )
                     }
                 }
@@ -155,8 +195,10 @@ fun AppNavigation() {
                 )
             }
 
+            // --- FIXED: now points to TimerWithSensorScreen
+            //     (was: broken placeholder TimerScreen) ---
             composable(AppScreen.Timer.name) {
-                TimerScreen(
+                TimerWithSensorScreen(
                     viewModel = viewModel,
                     onBack    = { navController.navigateUp() }
                 )
@@ -175,11 +217,33 @@ fun AppNavigation() {
                     onBack    = { navController.navigateUp() }
                 )
             }
+
+            // --- ADDED: previously missing route, screen 6 of 7 ---
+            composable(AppScreen.DailyTip.name) {
+                DailyTipScreen(
+                    viewModel = viewModel,
+                    onBack    = { navController.navigateUp() }
+                )
+            }
+
+            // --- ADDED: previously missing route, screen 7 of 7 ---
+            composable(AppScreen.Community.name) {
+                CommunityScreen(
+                    viewModel = viewModel,
+                    onBack    = { navController.navigateUp() }
+                )
+            }
         }
     }
 }
 
-@Composable
-fun TimerScreen(viewModel: AppViewModel, onBack: () -> Boolean) {
-    TODO("Not yet implemented")
-}
+// --- REMOVED: the broken placeholder composable that used to be here:
+//
+// @Composable
+// fun TimerScreen(viewModel: AppViewModel, onBack: () -> Boolean) {
+//     TODO("Not yet implemented")
+// }
+//
+// It's gone because AppScreen.Timer now routes directly to
+// TimerWithSensorScreen, which already exists in
+// ui/screens/TimerWithSensorScreen.kt

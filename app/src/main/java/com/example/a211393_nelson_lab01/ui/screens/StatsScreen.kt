@@ -19,6 +19,11 @@ import com.example.a211393_nelson_lab01.ui.components.StatChip
 @Composable
 fun StatsScreen(viewModel: AppViewModel, onBack: () -> Unit) {
     val scrollState = rememberScrollState()
+    
+    // Collect StateFlows from ViewModel as Compose State
+    val sessionHistory by viewModel.sessionHistory.collectAsState()
+    val studySlots by viewModel.studySlots.collectAsState()
+    val flashcards by viewModel.flashcards.collectAsState()
 
     Column(
         modifier = Modifier
@@ -42,8 +47,8 @@ fun StatsScreen(viewModel: AppViewModel, onBack: () -> Unit) {
                 ) {
                     StatChip("${viewModel.points.value}", "Total XP")
                     StatChip("${viewModel.petLevel}", "Pet Level")
-                    StatChip("${viewModel.sessionHistory.size}", "Sessions")
-                    StatChip("${viewModel.studySlots.size}", "Slots")
+                    StatChip("${sessionHistory.size}", "Sessions")
+                    StatChip("${studySlots.size}", "Slots")
                 }
             }
         }
@@ -94,7 +99,7 @@ fun StatsScreen(viewModel: AppViewModel, onBack: () -> Unit) {
         PerformanceCard(
             icon   = "\u23F1\uFE0F",
             title  = "Focus time",
-            value  = "${viewModel.sessionHistory.filter { it.type == "Timer" }.size * 25}m",
+            value  = "${sessionHistory.filter { it.type == "Timer" }.size * 25}m",
             detail = "Each completed Pomodoro = 25 minutes of focused study. Keep it up!"
         )
         PerformanceCard(
@@ -106,13 +111,13 @@ fun StatsScreen(viewModel: AppViewModel, onBack: () -> Unit) {
         PerformanceCard(
             icon   = "\uD83C\uDFC6",
             title  = "Flashcards created",
-            value  = "${viewModel.flashcards.size}",
+            value  = "${flashcards.size}",
             detail = "Creating flashcards earns 5 XP each. Reviewing them reinforces memory."
         )
         PerformanceCard(
             icon   = "\uD83D\uDCC5",
             title  = "Study slots scheduled",
-            value  = "${viewModel.studySlots.size}",
+            value  = "${studySlots.size}",
             detail = "Schedule your study sessions by subject and day to build a consistent study habit."
         )
 
@@ -120,20 +125,20 @@ fun StatsScreen(viewModel: AppViewModel, onBack: () -> Unit) {
 
         // ── Session history ───────────────────────────────────────
         Text(
-            "Session History (${viewModel.sessionHistory.size})",
+            "Session History (${sessionHistory.size})",
             fontWeight = FontWeight.Bold,
             fontSize   = 15.sp
         )
         Spacer(Modifier.height(8.dp))
 
-        if (viewModel.sessionHistory.isEmpty()) {
+        if (sessionHistory.isEmpty()) {
             Text(
                 "No sessions yet. Complete a timer or quiz to see your history here.",
                 color    = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 13.sp
             )
         } else {
-            viewModel.sessionHistory.reversed().forEach { session ->
+            sessionHistory.reversed().forEach { session ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -177,20 +182,20 @@ fun StatsScreen(viewModel: AppViewModel, onBack: () -> Unit) {
         // ── My Schedule ── ADD + DISPLAY requirement ──────────────
         // Slots added on StudySessionScreen, displayed here
         Text(
-            "My Schedule (${viewModel.studySlots.size})",
+            "My Schedule (${studySlots.size})",
             fontWeight = FontWeight.Bold,
             fontSize   = 15.sp
         )
         Spacer(Modifier.height(8.dp))
 
-        if (viewModel.studySlots.isEmpty()) {
+        if (studySlots.isEmpty()) {
             Text(
                 "No slots yet. Add a study slot in the Schedule tab.",
                 color    = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 13.sp
             )
         } else {
-            viewModel.studySlots.forEach { slot ->
+            studySlots.forEach { slot ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
