@@ -1,0 +1,40 @@
+Focus Buddy 
+Focus Buddy is a gamified study companion application developed to help students build consistent study habits. The app combines productivity tools such as study scheduling, flashcards, quizzes, a Pomodoro timer, and a virtual pet system that grows as users earn XP through studying.
+
+SDG Theme
+SDG 4: Quality Education
+Focus Buddy supports Sustainable Development Goal 4 by encouraging effective learning habits through gamification, motivation, and study management tools. The app helps students stay organized, focused, and engaged in their educational journey.
+
+Features
+
+* Home and Login screens with persistent user name storage
+* Dashboard displaying XP and pet progress
+* Study Session screen with:
+
+  * Weekly study schedule
+  * Subject quizzes
+  * Flashcards
+* Pomodoro Focus Timer
+* Pet Growth and Evolution System
+* Statistics and Study Summary screen
+* Room Database for offline data persistence
+* Firebase Firestore Community Goals board with real-time updates
+* Daily Motivation screen using the ZenQuotes API
+* Accelerometer integration to detect phone shaking and pause focus sessions
+* Light sensor integration to monitor study environment brightness
+
+Setup Instructions
+1. Clone the repository:
+ git clone <repository-url>
+2. Open the project in Android Studio (Ladybug or newer recommended).
+3. Ensure the Firebase configuration file is present:
+   app/google-services.json
+4. Sync Gradle dependencies.
+5. Run the application on an Android emulator or physical device.
+
+Requirements
+* Android Studio Ladybug or newer
+* Internet connection (for Firebase and API features)
+* Android device or emulator
+* Accelerometer sensor (required for shake detection)
+* Light sensor (optional)
