@@ -40,15 +40,13 @@ fun TimerWithSensorScreen(viewModel: AppViewModel, onBack: () -> Unit) {
     var shakeCount     by remember { mutableStateOf(0) }
     var showShakeAlert by remember { mutableStateOf(false) }
     var phoneFlat      by remember { mutableStateOf(true) }
+    var accelAvailable by remember { mutableStateOf(true) }
 
     // ------- Light sensor state -------
     var luxLevel       by remember { mutableStateOf(0f) }
     var lightStatus    by remember { mutableStateOf("Checking lighting...") }
+    var lightAvailable by remember { mutableStateOf(true) }
 
-    // FIX: Use a stable ref so the sensor callback always reads the LATEST
-    // timerRunning value, avoiding the stale lambda closure bug.
-    // Without this, the lambda captured at composition time would always see
-    // the initial false value regardless of later state changes.
     val timerRunningRef = remember { mutableStateOf(false) }
     LaunchedEffect(timerRunning) {
         timerRunningRef.value = timerRunning
@@ -56,11 +54,12 @@ fun TimerWithSensorScreen(viewModel: AppViewModel, onBack: () -> Unit) {
 
     // ================================================================
     // SENSOR 1 — Accelerometer
-    // DisposableEffect(Unit): runs once on entry, onDispose on exit.
     // ================================================================
     DisposableEffect(Unit) {
         val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         val accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+
+        accelAvailable = accelerometer != null
 
         val accelListener = object : SensorEventListener {
 
@@ -86,7 +85,6 @@ fun TimerWithSensorScreen(viewModel: AppViewModel, onBack: () -> Unit) {
                     lastShakeTime = now
                     Handler(Looper.getMainLooper()).post {
                         shakeCount++
-                        // FIX: read from ref instead of captured lambda value
                         if (timerRunningRef.value) {
                             timerRunning   = false
                             showShakeAlert = true
@@ -98,13 +96,17 @@ fun TimerWithSensorScreen(viewModel: AppViewModel, onBack: () -> Unit) {
             override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
         }
 
-        sensorManager.registerListener(
-            accelListener,
-            accelerometer,
-            SensorManager.SENSOR_DELAY_GAME
-        )
+        if (accelerometer != null) {
+            sensorManager.registerListener(
+                accelListener,
+                accelerometer,
+                SensorManager.SENSOR_DELAY_GAME
+            )
+        }
 
-        onDispose { sensorManager.unregisterListener(accelListener) }
+        onDispose {
+            if (accelerometer != null) sensorManager.unregisterListener(accelListener)
+        }
     }
 
     // ================================================================
@@ -113,6 +115,11 @@ fun TimerWithSensorScreen(viewModel: AppViewModel, onBack: () -> Unit) {
     DisposableEffect(Unit) {
         val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         val lightSensor   = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
+
+        lightAvailable = lightSensor != null
+        if (lightSensor == null) {
+            lightStatus = "Light sensor not available on this device"
+        }
 
         val lightListener = object : SensorEventListener {
             override fun onSensorChanged(event: SensorEvent) {
@@ -130,13 +137,17 @@ fun TimerWithSensorScreen(viewModel: AppViewModel, onBack: () -> Unit) {
             override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
         }
 
-        sensorManager.registerListener(
-            lightListener,
-            lightSensor,
-            SensorManager.SENSOR_DELAY_NORMAL
-        )
+        if (lightSensor != null) {
+            sensorManager.registerListener(
+                lightListener,
+                lightSensor,
+                SensorManager.SENSOR_DELAY_NORMAL
+            )
+        }
 
-        onDispose { sensorManager.unregisterListener(lightListener) }
+        onDispose {
+            if (lightSensor != null) sensorManager.unregisterListener(lightListener)
+        }
     }
 
     // ================================================================
@@ -179,8 +190,11 @@ fun TimerWithSensorScreen(viewModel: AppViewModel, onBack: () -> Unit) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
             shape    = RoundedCornerShape(16.dp),
-            color    = if (phoneFlat) MaterialTheme.colorScheme.primaryContainer
-            else MaterialTheme.colorScheme.errorContainer
+            color    = when {
+                !accelAvailable -> MaterialTheme.colorScheme.surfaceVariant
+                phoneFlat       -> MaterialTheme.colorScheme.primaryContainer
+                else            -> MaterialTheme.colorScheme.errorContainer
+            }
         ) {
             Row(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
@@ -190,12 +204,22 @@ fun TimerWithSensorScreen(viewModel: AppViewModel, onBack: () -> Unit) {
                 Text("\uD83D\uDCF1", fontSize = 18.sp)
                 Column {
                     Text(
-                        text = if (phoneFlat) "Phone flat — focus mode" else "Phone moved — stay focused!",
+                        text = when {
+                            !accelAvailable -> "Accelerometer not available on this device"
+                            phoneFlat        -> "Phone flat — focus mode"
+                            else             -> "Phone moved — stay focused!"
+                        },
                         fontSize = 13.sp, fontWeight = FontWeight.SemiBold,
-                        color = if (phoneFlat) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                        color = when {
+                            !accelAvailable -> MaterialTheme.colorScheme.onSurfaceVariant
+                            phoneFlat        -> MaterialTheme.colorScheme.primary
+                            else             -> MaterialTheme.colorScheme.error
+                        }
                     )
-                    Text("Shakes detected: $shakeCount",
-                        fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    if (accelAvailable) {
+                        Text("Shakes detected: $shakeCount",
+                            fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
                 }
             }
         }
@@ -207,6 +231,7 @@ fun TimerWithSensorScreen(viewModel: AppViewModel, onBack: () -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             shape    = RoundedCornerShape(16.dp),
             color    = when {
+                !lightAvailable -> MaterialTheme.colorScheme.surfaceVariant
                 luxLevel < 50f  -> MaterialTheme.colorScheme.errorContainer
                 luxLevel < 300f -> MaterialTheme.colorScheme.tertiaryContainer
                 else            -> MaterialTheme.colorScheme.primaryContainer
@@ -222,13 +247,16 @@ fun TimerWithSensorScreen(viewModel: AppViewModel, onBack: () -> Unit) {
                     Text(
                         text = lightStatus, fontSize = 13.sp, fontWeight = FontWeight.SemiBold,
                         color = when {
+                            !lightAvailable -> MaterialTheme.colorScheme.onSurfaceVariant
                             luxLevel < 50f  -> MaterialTheme.colorScheme.error
                             luxLevel < 300f -> MaterialTheme.colorScheme.tertiary
                             else            -> MaterialTheme.colorScheme.primary
                         }
                     )
-                    Text("${luxLevel.toInt()} lux",
-                        fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    if (lightAvailable) {
+                        Text("${luxLevel.toInt()} lux",
+                            fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
                 }
             }
         }
